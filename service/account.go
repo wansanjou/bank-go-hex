@@ -1,6 +1,7 @@
 package service
 
 type NewAccountRequest struct {
+	CustomerID  uint    `json:"customer_id"`
 	AccountType string  `json:"account_type"`
 	Amount      float64 `json:"amount"`
 }
@@ -14,6 +15,6 @@ type AccountResponse struct {
 }
 
 type AccountService interface {
-	NewAccount(int, NewAccountRequest) (*AccountResponse, error)
+	NewAccount(NewAccountRequest) (*AccountResponse, error)
 	GetAccounts(int) ([]AccountResponse, error)
 }

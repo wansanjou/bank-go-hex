@@ -19,12 +19,12 @@ func NewAccountHandler(accountservice service.AccountService) accountHandler  {
 }
 
 func (ah *accountHandler) NewAccount(c *fiber.Ctx) error {
-	customerID, err := strconv.Atoi(c.Params("customerID"))
-	if err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid ID",
-		})
-	}
+	// customerID, err := strconv.Atoi(c.Params("customerID"))
+	// if err != nil {
+	// 	return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+	// 		"error": "Invalid ID",
+	// 	})
+	// }
 
 	var account service.NewAccountRequest
 	if err := c.BodyParser(&account); err != nil {
@@ -32,7 +32,7 @@ func (ah *accountHandler) NewAccount(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
-	response, err := ah.accountservice.NewAccount(customerID, account)
+	response, err := ah.accountservice.NewAccount(account)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}

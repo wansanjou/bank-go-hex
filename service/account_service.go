@@ -19,8 +19,15 @@ func NewAccountService(accRepo repository.AccountRepository) AccountService  {
 	return accountService{accRepo: accRepo}
 }
 
-func (as accountService) NewAccount(customerID int, request NewAccountRequest) (*AccountResponse, error)  {
+func (as accountService) NewAccount(request NewAccountRequest) (*AccountResponse, error)  {
 	//Validate input 
+	if request.CustomerID == 0 {
+		return nil, errs.AppError{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid CustomerID",
+		}
+	}
+
 	if request.Amount < 5000 {
 		return nil , errs.AppError{
 			Code: http.StatusBadRequest,
@@ -36,7 +43,7 @@ func (as accountService) NewAccount(customerID int, request NewAccountRequest) (
 	}
 
 	account := repository.Account{
-		CustomerID: uint(customerID),
+		CustomerID: request.CustomerID,
 		OpeningDate: time.Now().Format("2006-1-2 15:04:05"),
 		AccountType: request.AccountType,
 		Amount: request.Amount,
@@ -51,6 +58,7 @@ func (as accountService) NewAccount(customerID int, request NewAccountRequest) (
 	}
 
 	response := AccountResponse{
+		CustomerID:  newAcc.CustomerID,
 		OpeningDate:  newAcc.OpeningDate,
 		AccountType:  newAcc.AccountType,
 		Amount: 			newAcc.Amount,
@@ -71,6 +79,7 @@ func (as accountService) GetAccounts(customerID int) ([]AccountResponse, error) 
 	response := []AccountResponse{}
 	for _ , accounts := range accounts {
 		response = append(response, AccountResponse{
+			CustomerID:  accounts.CustomerID,
 			OpeningDate:  accounts.OpeningDate,
 			AccountType: accounts.AccountType,
 			Amount: accounts.Amount,
